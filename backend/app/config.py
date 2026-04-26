@@ -32,6 +32,8 @@ class Settings:
     shadowrocket_service_name: str = os.getenv(
         "PROXY_ADMIN_SHADOWROCKET_TUNNEL_SERVICE", "proxy-admin-shadowrocket-tunnel.service"
     )
+    shadowrocket_public_host: str = os.getenv("PROXY_ADMIN_SHADOWROCKET_PUBLIC_HOST", "")
+    admin_public_host: str = os.getenv("PROXY_ADMIN_ADMIN_PUBLIC_HOST", "")
 
     def __post_init__(self) -> None:
         if os.name == "nt" and os.getenv("PROXY_ADMIN_DEMO") is None:

@@ -40,6 +40,7 @@ Copy-Item -Path .\dist -Destination ..ackend\static -Recurse -Force
 
 ## 服务器部署
 - 部署模板见 `deploy/proxy-admin.service`
+- 固定域名 tunnel 模板见 `deploy/proxy-admin-fixed-tunnel.service`
 - 环境变量模板见 `deploy/proxy-admin.env.example`
 - 安装脚本示例见 `deploy/server_install.sh`
 

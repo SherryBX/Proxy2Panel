@@ -148,8 +148,10 @@ def create_app() -> FastAPI:
     @app.get(f"{settings.api_prefix}/settings")
     async def get_settings(session: dict = Depends(require_user)):
         payload = app.state.manager.get_settings_payload()
-        payload["clashSubscriptionUrl"] = f"/api/subscriptions/clash?token={get_setting('subscription_token', '')}"
-        payload["shadowrocketSubscriptionUrl"] = f"/api/subscriptions/shadowrocket?token={get_setting('subscription_token', '')}"
+        base = settings.admin_public_host or ""
+        prefix = f"https://{base}" if base else ""
+        payload["clashSubscriptionUrl"] = f"{prefix}/api/subscriptions/clash?token={get_setting('subscription_token', '')}"
+        payload["shadowrocketSubscriptionUrl"] = f"{prefix}/api/subscriptions/shadowrocket?token={get_setting('subscription_token', '')}"
         return payload
 
     @app.put(f"{settings.api_prefix}/settings")

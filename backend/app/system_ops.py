@@ -104,10 +104,10 @@ class ProxyManager:
             node["raw_link"] = build_vless_link(node)
             return [node]
 
-        tunnel_url = self._extract_tunnel_url(settings.shadowrocket_service_name)
-        if not tunnel_url:
+        tunnel_host = settings.shadowrocket_public_host or self._extract_tunnel_url(settings.shadowrocket_service_name)
+        if not tunnel_host:
             return []
-        host = re.sub(r"^https://", "", tunnel_url.strip()).rstrip("/")
+        host = re.sub(r"^https://", "", tunnel_host.strip()).rstrip("/")
         uuid = self._safe_read(self.agsbx_dir / "uuid").strip()
         node = {
             "id": stable_id("shadowrocket:" + host),
@@ -408,7 +408,13 @@ class ProxyManager:
             "demoMode": self.demo_mode,
             "auditLogs": fetch_audit_logs(limit=100),
             "shadowrocketCompatible": bool(shadowrocket_nodes),
-            "shadowrocketHint": "已生成 Shadowrocket 专用兼容节点" if shadowrocket_nodes else "Shadowrocket 专用兼容节点未就绪",
+            "shadowrocketHint": (
+                f"已生成 Shadowrocket 专用兼容节点: {shadowrocket_nodes[0]['address']}"
+                if shadowrocket_nodes
+                else "Shadowrocket 专用兼容节点未就绪"
+            ),
+            "shadowrocketPublicHost": settings.shadowrocket_public_host,
+            "adminPublicHost": settings.admin_public_host,
         }
 
     def _resolve_node(self, node_id: str | None) -> dict[str, Any] | None:

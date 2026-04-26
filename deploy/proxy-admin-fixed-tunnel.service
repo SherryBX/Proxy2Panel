@@ -1,0 +1,14 @@
+[Unit]
+Description=Proxy2Panel Fixed Tunnel
+After=network.target xr.service proxy-admin.service
+
+[Service]
+Type=simple
+EnvironmentFile=/opt/proxy-admin/.env
+ExecStart=/root/agsbx/cloudflared tunnel run --token ${PROXY_ADMIN_CLOUDFLARED_TUNNEL_TOKEN}
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target
