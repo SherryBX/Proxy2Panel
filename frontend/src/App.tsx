@@ -464,7 +464,7 @@ function App() {
             </NavLink>
           ))}
         </nav>
-        <button className="ghost-button logout-button" onClick={logout}>
+        <button type="button" className="ghost-button logout-button" onClick={logout}>
           退出登录
         </button>
       </aside>
@@ -478,7 +478,7 @@ function App() {
           <div className="status-row">
             <StatusPill label="Xray" active={Boolean(overview?.serviceStatus.xray.active)} />
             <StatusPill label="Argo" active={Boolean(overview?.serviceStatus.argo.active)} />
-            <button className="ghost-button" onClick={() => void refreshAll()}>
+            <button type="button" className="ghost-button" onClick={() => void refreshAll()}>
               <RefreshCw size={15} />
               刷新
             </button>
@@ -680,7 +680,7 @@ function NodesPage({
           <h3>节点矩阵</h3>
           <div className="filters">
             <span className="subtle mono">SWITCH / RENAME / FAVORITE / SHARE</span>
-            <button className="ghost-button" disabled={busy === "latency-map"} onClick={() => void onRefreshLatency()}>
+            <button type="button" className="ghost-button" disabled={busy === "latency-map"} onClick={() => void onRefreshLatency()}>
               <Radar size={15} />
               {busy === "latency-map" ? "测速中..." : "全测速"}
             </button>
@@ -694,10 +694,10 @@ function NodesPage({
                   {editingNodeId === node.id ? (
                     <div className="rename-box">
                       <input value={renameDraft} onChange={(event) => setRenameDraft(event.target.value)} maxLength={24} />
-                      <button className="accent-button compact" disabled={busy === `rename-${node.id}`} onClick={() => void onRename(node.id)}>
+                      <button type="button" className="accent-button compact" disabled={busy === `rename-${node.id}`} onClick={() => void onRename(node.id)}>
                         {busy === `rename-${node.id}` ? "保存中..." : "保存"}
                       </button>
-                      <button className="ghost-button compact" onClick={() => { setEditingNodeId(""); setRenameDraft(""); }}>
+                      <button type="button" className="ghost-button compact" onClick={() => { setEditingNodeId(""); setRenameDraft(""); }}>
                         取消
                       </button>
                     </div>
@@ -719,7 +719,7 @@ function NodesPage({
                 </div>
               </div>
               <div className="node-actions">
-                <button className="ghost-button" onClick={() => void onFavorite(node.id, !node.favorite)}>
+                <button type="button" className="ghost-button" onClick={() => void onFavorite(node.id, !node.favorite)}>
                   <Heart size={15} />
                   {node.favorite ? "取消收藏" : "收藏"}
                 </button>
@@ -732,13 +732,13 @@ function NodesPage({
                 >
                   <Edit3 size={15} />改名
                 </button>
-                <button className="ghost-button" onClick={() => void onCopy(node.raw_link, "导入串已复制")}>
+                <button type="button" className="ghost-button" onClick={() => void onCopy(node.raw_link, "导入串已复制")}>
                   <Copy size={15} />复制
                 </button>
-                <button className="ghost-button" onClick={() => void onDownloadQr(node)}>
+                <button type="button" className="ghost-button" onClick={() => void onDownloadQr(node)}>
                   <QrCode size={15} />二维码
                 </button>
-                <button className="accent-button" disabled={busy === `node-${node.id}` || node.active} onClick={() => void onSwitch(node.id)}>
+                <button type="button" className="accent-button" disabled={busy === `node-${node.id}` || node.active} onClick={() => void onSwitch(node.id)}>
                   {busy === `node-${node.id}` ? "切换中..." : "切换"}
                 </button>
               </div>
@@ -888,7 +888,7 @@ function DiagnosticsPage({
       <section className="panel panel-span-two panel-sharp">
         <div className="panel-head">
           <h3>主流站点延迟</h3>
-          <button className="ghost-button" disabled={busy === "site-latency"} onClick={() => void onRefreshSiteLatency()}>
+            <button type="button" className="ghost-button" disabled={busy === "site-latency"} onClick={() => void onRefreshSiteLatency()}>
             <Globe size={15} />
             {busy === "site-latency" ? "测速中..." : "站点测速"}
           </button>
@@ -924,7 +924,7 @@ function DiagnosticsPage({
               <option value="audit">审计</option>
             </select>
             <input value={logQuery} onChange={(event) => setLogQuery(event.target.value)} placeholder="按关键字搜索" />
-            <button className="ghost-button" onClick={onSearchLogs}><Logs size={15} />搜索</button>
+            <button type="button" className="ghost-button" onClick={onSearchLogs}><Logs size={15} />搜索</button>
           </div>
         </div>
         <div className="log-pane">
@@ -988,14 +988,14 @@ function SettingsPage({ settings, form, setForm, busy, onSave, onCopy, clashUrl,
         <div className="subscription-card">
           <p>支持 Mihomo / Clash Meta 直接拉取订阅。</p>
           <div className="tab-strip">
-            <button className={clashTab === "link" ? "tab-button active" : "tab-button"} onClick={() => setClashTab("link")}>订阅链接</button>
-            <button className={clashTab === "qr" ? "tab-button active" : "tab-button"} onClick={() => setClashTab("qr")}>订阅二维码</button>
+            <button type="button" className={clashTab === "link" ? "tab-button active" : "tab-button"} onClick={() => setClashTab("link")}>订阅链接</button>
+            <button type="button" className={clashTab === "qr" ? "tab-button active" : "tab-button"} onClick={() => setClashTab("qr")}>订阅二维码</button>
           </div>
           {clashTab === "link" ? (
             <>
               <div className="subscription-url">{clashUrl || "暂未生成"}</div>
               <div className="action-grid single-line">
-                <button className="accent-button" disabled={!clashUrl} onClick={() => void onCopy(clashUrl, "Clash 订阅地址已复制")}><LinkIcon size={15} />复制订阅链接</button>
+                <button type="button" className="accent-button" disabled={!clashUrl} onClick={() => void onCopy(clashUrl, "Clash 订阅地址已复制")}><LinkIcon size={15} />复制订阅链接</button>
               </div>
             </>
           ) : (
@@ -1008,16 +1008,16 @@ function SettingsPage({ settings, form, setForm, busy, onSave, onCopy, clashUrl,
         <div className="panel-head"><h3>Shadowrocket 订阅</h3></div>
         <div className="subscription-card">
           <p>输出 Base64 URI 列表，适合 Shadowrocket 直接导入，也能兼容部分通用订阅客户端。</p>
-          <p>提示：如果某些节点包含较新的 VLESS 加密能力，Shadowrocket 可能出现导入成功但节点不可用的情况。</p>
+          <p>{settings?.shadowrocketHint || "Shadowrocket 专用兼容节点状态未知"}</p>
           <div className="tab-strip">
-            <button className={shadowrocketTab === "link" ? "tab-button active" : "tab-button"} onClick={() => setShadowrocketTab("link")}>订阅链接</button>
-            <button className={shadowrocketTab === "qr" ? "tab-button active" : "tab-button"} onClick={() => setShadowrocketTab("qr")}>订阅二维码</button>
+            <button type="button" className={shadowrocketTab === "link" ? "tab-button active" : "tab-button"} onClick={() => setShadowrocketTab("link")}>订阅链接</button>
+            <button type="button" className={shadowrocketTab === "qr" ? "tab-button active" : "tab-button"} onClick={() => setShadowrocketTab("qr")}>订阅二维码</button>
           </div>
           {shadowrocketTab === "link" ? (
             <>
               <div className="subscription-url">{shadowrocketUrl || "暂未生成"}</div>
               <div className="action-grid single-line">
-                <button className="accent-button" disabled={!shadowrocketUrl} onClick={() => void onCopy(shadowrocketUrl, "Shadowrocket 订阅地址已复制")}><LinkIcon size={15} />复制订阅链接</button>
+                <button type="button" className="accent-button" disabled={!shadowrocketUrl} onClick={() => void onCopy(shadowrocketUrl, "Shadowrocket 订阅地址已复制")}><LinkIcon size={15} />复制订阅链接</button>
               </div>
             </>
           ) : (
@@ -1087,7 +1087,7 @@ function TapeCard({ title, value, tone }: { title: string; value: string; tone: 
 }
 
 function ActionButton({ label, onClick, busy, accent = false }: { label: string; onClick: () => void; busy: boolean; accent?: boolean; }) {
-  return <button className={accent ? "accent-button" : "ghost-button"} disabled={busy} onClick={onClick}>{busy ? "执行中..." : label}</button>;
+  return <button type="button" className={accent ? "accent-button" : "ghost-button"} disabled={busy} onClick={onClick}>{busy ? "执行中..." : label}</button>;
 }
 
 function ControlGroup({ title, description, target, busy, onAction }: { title: string; description: string; target: string; busy: string; onAction: (action: string, target: string, dangerous?: boolean) => Promise<void>; }) {

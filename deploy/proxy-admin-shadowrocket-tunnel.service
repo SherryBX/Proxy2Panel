@@ -1,0 +1,13 @@
+[Unit]
+Description=Proxy Admin Shadowrocket Tunnel
+After=network.target xr.service
+
+[Service]
+Type=simple
+ExecStart=/root/agsbx/cloudflared tunnel --url http://127.0.0.1:35995 --no-autoupdate --protocol http2
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

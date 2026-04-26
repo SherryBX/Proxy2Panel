@@ -1,7 +1,7 @@
 from app.parser import parse_share_links
 import base64
 
-from app.subscription import build_clash_profile, build_shadowrocket_profile
+from app.subscription import build_clash_profile, build_shadowrocket_profile, build_vless_link
 from app.utils import stable_id
 
 
@@ -47,3 +47,27 @@ def test_build_shadowrocket_profile_encodes_raw_links_as_base64_lines():
     assert "vless://" in decoded
     assert "AWS-JP-main" in decoded
     assert "AWS-JP-direct" in decoded
+
+
+def test_build_vless_link_generates_shadowrocket_friendly_vless_uri():
+    node = {
+        "label": "Shadowrocket TLS",
+        "username": "271c0354-4b19-46c9-bd8a-92e27f0c3ca9",
+        "address": "example.trycloudflare.com",
+        "port": 443,
+        "encryption": "none",
+        "network": "ws",
+        "host": "example.trycloudflare.com",
+        "path": "/shadowrocket-ws",
+        "security": "tls",
+        "sni": "example.trycloudflare.com",
+        "fingerprint": "chrome",
+        "flow": "",
+    }
+
+    link = build_vless_link(node)
+
+    assert link.startswith("vless://271c0354-4b19-46c9-bd8a-92e27f0c3ca9@example.trycloudflare.com:443?")
+    assert "encryption=none" in link
+    assert "type=ws" in link
+    assert "path=%2Fshadowrocket-ws" in link

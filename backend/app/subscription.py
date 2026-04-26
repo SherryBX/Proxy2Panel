@@ -50,6 +50,24 @@ def build_shadowrocket_profile(nodes: list[dict[str, Any]]) -> str:
     return base64.b64encode(payload.encode("utf-8")).decode("ascii")
 
 
+def build_vless_link(node: dict[str, Any]) -> str:
+    from urllib.parse import quote, urlencode
+
+    query = {
+        "encryption": node.get("encryption", "none"),
+        "type": node.get("network", "ws"),
+        "host": node.get("host", ""),
+        "path": node.get("path", "/"),
+        "security": node.get("security", "tls"),
+        "sni": node.get("sni", ""),
+        "fp": node.get("fingerprint", ""),
+    }
+    if node.get("flow"):
+        query["flow"] = node["flow"]
+    encoded = urlencode({k: v for k, v in query.items() if v != ""})
+    return f"vless://{node['username']}@{node['address']}:{node['port']}?{encoded}#{quote(node['label'])}"
+
+
 def node_to_clash_proxy(node: dict[str, Any]) -> dict[str, Any]:
     proxy: dict[str, Any] = {
         "name": node["label"],

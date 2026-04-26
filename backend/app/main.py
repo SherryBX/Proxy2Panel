@@ -171,7 +171,7 @@ def create_app() -> FastAPI:
         valid_token = get_setting("subscription_token", "")
         if token != valid_token:
             auth_service.require_auth(request)
-        profile = build_shadowrocket_profile(app.state.manager.get_nodes())
+        profile = build_shadowrocket_profile(app.state.manager.get_shadowrocket_nodes())
         return PlainTextResponse(profile, media_type="text/plain; charset=utf-8")
 
     @app.websocket("/ws/overview")

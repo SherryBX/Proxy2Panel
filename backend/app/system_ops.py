@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import concurrent.futures
+import re
 import socket
 import ssl
 import subprocess
@@ -21,7 +22,8 @@ from .db import (
     upsert_node_pref,
 )
 from .parser import parse_share_links
-from .utils import build_rate_series, now_ts
+from .subscription import build_vless_link
+from .utils import build_rate_series, now_ts, stable_id
 
 
 class ProxyManager:
@@ -78,6 +80,55 @@ class ProxyManager:
             self.set_active_node(nodes[0]["id"], audit=False)
             nodes[0]["active"] = True
         return nodes
+
+    def get_shadowrocket_nodes(self) -> list[dict[str, Any]]:
+        if self.demo_mode:
+            node = {
+                "id": stable_id("shadowrocket-demo"),
+                "scheme": "vless",
+                "address": "shadowrocket-demo.trycloudflare.com",
+                "port": 443,
+                "username": "271c0354-4b19-46c9-bd8a-92e27f0c3ca9",
+                "network": "ws",
+                "security": "tls",
+                "encryption": "none",
+                "host": "shadowrocket-demo.trycloudflare.com",
+                "path": settings.shadowrocket_path,
+                "sni": "shadowrocket-demo.trycloudflare.com",
+                "flow": "",
+                "fingerprint": "chrome",
+                "label": "Shadowrocket TLS",
+                "favorite": False,
+                "active": False,
+            }
+            node["raw_link"] = build_vless_link(node)
+            return [node]
+
+        tunnel_url = self._extract_tunnel_url(settings.shadowrocket_service_name)
+        if not tunnel_url:
+            return []
+        host = re.sub(r"^https://", "", tunnel_url.strip()).rstrip("/")
+        uuid = self._safe_read(self.agsbx_dir / "uuid").strip()
+        node = {
+            "id": stable_id("shadowrocket:" + host),
+            "scheme": "vless",
+            "address": host,
+            "port": 443,
+            "username": uuid,
+            "network": "ws",
+            "security": "tls",
+            "encryption": "none",
+            "host": host,
+            "path": settings.shadowrocket_path,
+            "sni": host,
+            "flow": "",
+            "fingerprint": "chrome",
+            "label": "Shadowrocket TLS",
+            "favorite": False,
+            "active": False,
+        }
+        node["raw_link"] = build_vless_link(node)
+        return [node]
 
     def get_active_node_id(self) -> str:
         return get_setting("active_node_id", "")
@@ -348,6 +399,7 @@ class ProxyManager:
         return {"ok": proc.returncode == 0, "message": "valid" if proc.returncode == 0 else "invalid", "output": output}
 
     def get_settings_payload(self) -> dict[str, Any]:
+        shadowrocket_nodes = self.get_shadowrocket_nodes()
         return {
             "ipWhitelist": get_setting("ip_whitelist", settings.default_ip_whitelist),
             "sampleIntervalSeconds": settings.sample_interval_seconds,
@@ -355,6 +407,8 @@ class ProxyManager:
             "bindPort": settings.bind_port,
             "demoMode": self.demo_mode,
             "auditLogs": fetch_audit_logs(limit=100),
+            "shadowrocketCompatible": bool(shadowrocket_nodes),
+            "shadowrocketHint": "已生成 Shadowrocket 专用兼容节点" if shadowrocket_nodes else "Shadowrocket 专用兼容节点未就绪",
         }
 
     def _resolve_node(self, node_id: str | None) -> dict[str, Any] | None:
@@ -468,6 +522,15 @@ class ProxyManager:
             lines.append(desired)
         payload = "\n".join(lines) + ("\n" if lines else "")
         subprocess.run(["/usr/bin/crontab", "-"], input=payload, text=True, check=True)
+
+    def _extract_tunnel_url(self, service_name: str) -> str:
+        logs = self._run(
+            ["/usr/bin/journalctl", "-u", service_name, "-n", "120", "--no-pager"],
+            timeout=12,
+            check=False,
+        )
+        matches = re.findall(r"https://([a-z0-9-]+(?:\.[a-z0-9-]+)+)", logs, flags=re.IGNORECASE)
+        return f"https://{matches[-1]}" if matches else ""
 
     def _demo_links(self) -> str:
         return """vless://271c0354-4b19-46c9-bd8a-92e27f0c3ca9@www.xiaoshuofen.com:443?flow=xtls-rprx-vision&type=ws&host=firm-superintendent-machines-dealer.trycloudflare.com&path=%2F271c0354-4b19-46c9-bd8a-92e27f0c3ca9-vw&security=tls&sni=firm-superintendent-machines-dealer.trycloudflare.com&fp=chrome#AWS-JP-main

@@ -27,6 +27,11 @@ class Settings:
     interface_name: str = os.getenv("PROXY_ADMIN_INTERFACE", "")
     trust_forwarded_for: bool = os.getenv("PROXY_ADMIN_TRUST_FORWARDED_FOR", "1") == "1"
     demo_mode: bool = os.getenv("PROXY_ADMIN_DEMO", "0") == "1"
+    shadowrocket_port: int = int(os.getenv("PROXY_ADMIN_SHADOWROCKET_PORT", "35995"))
+    shadowrocket_path: str = os.getenv("PROXY_ADMIN_SHADOWROCKET_PATH", "/shadowrocket-ws")
+    shadowrocket_service_name: str = os.getenv(
+        "PROXY_ADMIN_SHADOWROCKET_TUNNEL_SERVICE", "proxy-admin-shadowrocket-tunnel.service"
+    )
 
     def __post_init__(self) -> None:
         if os.name == "nt" and os.getenv("PROXY_ADMIN_DEMO") is None:

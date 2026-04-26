@@ -49,3 +49,8 @@ Copy-Item -Path .\dist -Destination ..ackend\static -Recurse -Force
 
 ## 兼容提示
 Shadowrocket 对较新的 VLESS 加密能力支持可能不完整，出现“导入成功但节点不可用”时，优先检查客户端兼容性，而不是直接判断订阅失败。
+
+## Shadowrocket 专用兼容方案
+- 推荐通过单独的 Shadowrocket 订阅入口导入
+- 该入口预留给不带新型 VLESS 加密能力的兼容节点
+- 服务模板见 `deploy/proxy-admin-shadowrocket-tunnel.service`

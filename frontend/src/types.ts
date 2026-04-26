@@ -86,5 +86,7 @@ export interface SettingsResponse {
   demoMode: boolean;
   clashSubscriptionUrl: string;
   shadowrocketSubscriptionUrl: string;
+  shadowrocketCompatible: boolean;
+  shadowrocketHint: string;
   auditLogs: LogEntry[];
 }
